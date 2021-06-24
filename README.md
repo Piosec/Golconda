@@ -69,3 +69,7 @@ $ ulimit -n
 $ ulimit -n 65600
 ```
 
+# Todo 
+
+- New server feature, listening to the network interface to monitor upcoming ports
+- Change the top-ports configuration to be more accurate
