@@ -8,10 +8,6 @@ import (
     "github.com/TwinProduction/go-color"
 )
 
-var target string
-var ports string
-var topports int
-var command string
 
 var clientCmd = &cobra.Command{
   Use:   "client",

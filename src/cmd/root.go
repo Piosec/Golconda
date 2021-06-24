@@ -11,6 +11,13 @@ var rootCmd = &cobra.Command{
          Please use it with love too <3.`,
 }
 
+var target string
+var ports string
+var topports int
+var command string
+var dump bool
+var interface_name string
+
 func Execute() error {
     return rootCmd.Execute()
 }
