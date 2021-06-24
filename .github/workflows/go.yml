@@ -1,10 +1,5 @@
 name: Go
 
-on:
-  push:
-    branches:
-    - master
-
 jobs:
   releases-matrix:
     name: Release Go Binary
