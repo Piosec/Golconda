@@ -12,7 +12,6 @@ import (
     "github.com/google/gopacket/layers"
     "github.com/google/gopacket/pcap"
     "time"
-
 )
 
 const (
@@ -68,9 +67,17 @@ func PortHandlers(ports_list string){
     }
 }
 
-func MonitorInterface(interface_name string, target string, ports_list string){
+func MonitorInterface(interface_name string, target string){
 
-    fmt.Println(interface_name, target,ports_list)
+    c := make(chan os.Signal, 1)
+    signal.Notify(c, os.Interrupt)
+    go func() {
+      for sig := range c {
+        fmt.Printf("\n" + color.Ize(color.Blue, "Program %v by the user. See you soon! :D"), sig)
+
+        os.Exit(1)
+      }
+    }()
     var interface_bool bool = false
     if os.Getuid() != 0 {
         fmt.Println(color.Ize(color.Red,"[-] ") + "Dump mode must be run as root")
@@ -97,30 +104,24 @@ func MonitorInterface(interface_name string, target string, ports_list string){
     defer handle.Close()
 
     packets := gopacket.NewPacketSource(handle,handle.LinkType()).Packets()
+    var eth layers.Ethernet
+    var ip4 layers.IPv4
+    //var ip6 layers.IPv6
+    var tcp layers.TCP
+    //var udp layers.UDP
+
+    parser := gopacket.NewDecodingLayerParser(layers.LayerTypeEthernet,&eth, &ip4, &tcp)
+    decodedLayers := make([]gopacket.LayerType, 0, 10)
+
     for pkt := range packets {
-    //    fmt.Println(pkt)
-        var ip layers.IPv4
-        ipLayer := pkt.Layer(layers.LayerTypeIPv4)
-        if ipLayer != nil {
-            ip, _ := ipLayer.(*layers.IPv4)
-            fmt.Println(ip.SrcIP,ip.DstIP)
-            if ip.SrcIP == net.ParseIP(target) {
-                fmt.Println("IP target is " + target)
-            }
+
+        err = parser.DecodeLayers(pkt.Data(),&decodedLayers)
+        if err != nil {
+            fmt.Println(color.Ize(color.Red,"[-] " ) + "Error: Decoding a layer ", err)
         }
 
-        tcpLayer := pkt.Layer(layers.LayerTypeTCP)
-        if tcpLayer != nil {
-            tcp, _ := tcpLayer.(*layers.TCP)
-            fmt.Println(tcp.SrcPort,tcp.DstPort)
-            if tcp.SrcPort == 443 {
-                fmt.Println("port 443 ")
-            }
+        if net.ParseIP(target).Equal(ip4.SrcIP){
+            fmt.Println(color.Ize(color.Green,"[+] " ) + "Reverse port open: ", tcp.DstPort)
         }
-        fmt.Println(net.ParseIP(target))
-        fmt.Println(ip.SrcIP)
-       // if ip.SrcIP == net.ParseIP(target) {
-       //     fmt.Println("IP target is " + target)
-       // }
     }
 }

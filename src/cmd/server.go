@@ -1,7 +1,6 @@
 package cmd
 
 import (
-   "fmt"
    "golconda/src/server"
    "golconda/src"
    "github.com/spf13/cobra"
@@ -27,21 +26,15 @@ var serverCmd = &cobra.Command{
     },
     Run: func(cmd *cobra.Command, args []string) {
 
+      if dump {
+        server.MonitorInterface(interface_name,target)
+      }
       if ports != "" {
-        if dump {
-            server.MonitorInterface(interface_name,target,"8080")
-        }else{
-            server.PortHandlers(ports)
-            }
+        server.PortHandlers(ports)
       }
       if topports >0 && topports < 65535 {
-            if dump {
-            server.MonitorInterface(interface_name,target,"8080")
-        }else{
-          server.PortHandlers(src.GetTopPorts(topports))
-            }
-      }else{
-        fmt.Println("Top ports must be between 1 and 65535")
+        //src.GenerateTopPorts(10)
+        server.PortHandlers(src.GetTopPorts(topports))
       }
   },
 }
