@@ -20,7 +20,7 @@ jobs:
       with:
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
-        goversion: "https://dl.google.com/go/go1.15.1.linux-amd64.tar.gz"
+        goversion: 1.16
         project_path: "."
         binary_name: "golconda"
         extra_files: README.md
