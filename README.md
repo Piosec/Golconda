@@ -1,3 +1,5 @@
+[![Go](https://github.com/Piosec/Golconda/actions/workflows/go-release.yml/badge.svg)](https://github.com/Piosec/Golconda/actions/workflows/go-release.yml)
+
 # Golconda
 
 Golconda is a client/server that aim to find reverse port open. 
