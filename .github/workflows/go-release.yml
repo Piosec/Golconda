@@ -24,4 +24,3 @@ jobs:
         goversion: 1.16
         project_path: "."
         binary_name: "golconda"
-        extra_files: README.md
