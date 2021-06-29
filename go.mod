@@ -1,6 +1,6 @@
 module golconda
 
-go 1.15
+go 1.16
 
 require (
 	github.com/TwinProduction/go-color v1.0.0
