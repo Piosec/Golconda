@@ -22,3 +22,4 @@ jobs:
         goversion: 1.16
         project_path: "."
         binary_name: "golconda"
+    - run: go run main.go
