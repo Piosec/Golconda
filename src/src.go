@@ -46,7 +46,8 @@ func CheckPorts(ports string) []string {
         ports_list = append(ports_list,ports)
     }
     // Check ports in range 1 --> 65535
-    checkPortsRange(ports_list)
+   checkPortsRange(ports_list)
+    
     return ports_list
 }
 

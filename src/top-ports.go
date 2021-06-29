@@ -2,12 +2,16 @@ package src
 
 import (
     "os"
-    "bufio"
+//    "bufio"
     "fmt"
     "strings"
     "strconv"
     "sort"
+    "embed"
 )
+
+//go:embed nmap-services
+var f embed.FS
 
 // Read file
 func check(e error) {
@@ -18,17 +22,13 @@ func check(e error) {
 
 func GetTopPorts(number int) string{
 
+    data, _ := f.ReadFile("nmap-services")
     listingPorts := make(map[string]float64)
-    file, err := os.Open("src/nmap-services")
-    check(err)
-    defer file.Close()
-
-    scanner := bufio.NewScanner(file)
-    // optionally, resize scanner's capacity for lines over 64K, see next example
-    for scanner.Scan() {
-        line := scanner.Text()
-        if strings.HasPrefix(line,"#") == false {
-            splited := strings.Split(line,"	")
+    var s_data = string(data)
+    splited_file := strings.Split(s_data,"\r\n")
+    for i:=0;i<len(splited_file);i++{
+        if strings.HasPrefix(splited_file[i],"#") == false && splited_file[i] != "" {
+            splited := strings.Split(splited_file[i],"	")
             //Output:  unknown 65514/tcp 0.000076
             //check if port is tcp or udp
             protocol := strings.Split(splited[1],"/")
@@ -46,6 +46,7 @@ func GetTopPorts(number int) string{
             //fmt.Println(splited[0], splited[1], splited[2])
         }
     }
+
 
     sortedPorts := make([]string, 0, len(listingPorts))
     for port := range listingPorts {

@@ -49,6 +49,26 @@ golconda client -t 127.0.0.1 -p 8080-9001
 golconda client -t 127.0.0.1 -p 8080,9000,9001 -c powershell
 ```
 
+## Top ports 
+
+This option is based on the nmap-service file from: https://github.com/nmap/nmap
+
+```bash
+golconda client -t 10.10.10.9 --top-ports 100
+```
+
+```bash
+golconda server --top-ports 100
+```
+
+## Dump 
+
+Based on tcpdump, it's not working on Windows now. 
+
+```bash
+golconda server -d -i eth0 -t 10.10.10.10 
+```
+
 # Errors 
 
 ## Too many open files
