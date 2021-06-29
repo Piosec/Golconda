@@ -1,10 +1,8 @@
 name: Go
-
 on:
   push:
     tags:
       - v*.*.*
-  
 jobs:
   releases-matrix:
     name: Release Go Binary
