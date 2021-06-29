@@ -12,6 +12,7 @@ import (
     "github.com/google/gopacket/layers"
     "github.com/google/gopacket/pcap"
     "time"
+    "runtime"
 )
 
 const (
@@ -67,17 +68,8 @@ func PortHandlers(ports_list string){
     }
 }
 
-func MonitorInterface(interface_name string, target string){
+func dumpLinuxSystem(interface_name string, target string){
 
-    c := make(chan os.Signal, 1)
-    signal.Notify(c, os.Interrupt)
-    go func() {
-      for sig := range c {
-        fmt.Printf("\n" + color.Ize(color.Blue, "Program %v by the user. See you soon! :D"), sig)
-
-        os.Exit(1)
-      }
-    }()
     var interface_bool bool = false
     if os.Getuid() != 0 {
         fmt.Println(color.Ize(color.Red,"[-] ") + "Dump mode must be run as root")
@@ -123,5 +115,31 @@ func MonitorInterface(interface_name string, target string){
         if net.ParseIP(target).Equal(ip4.SrcIP){
             fmt.Println(color.Ize(color.Green,"[+] " ) + "Reverse port open: ", tcp.DstPort)
         }
+    }
+
+}
+
+
+func dumpWindowsSystem(interface_name string, target string){
+    fmt.Println("This feature is not working yet")
+}
+
+func MonitorInterface(interface_name string, target string){
+
+    c := make(chan os.Signal, 1)
+    signal.Notify(c, os.Interrupt)
+    go func() {
+      for sig := range c {
+        fmt.Printf("\n" + color.Ize(color.Blue, "Program %v by the user. See you soon! :D"), sig)
+
+        os.Exit(1)
+      }
+    }()
+    if runtime.GOOS == "linux" {
+        dumpLinuxSystem(interface_name, target)
+    } else if runtime.GOOS == "windows" {
+        dumpWindowsSystem(interface_name,target)
+    } else {
+        fmt.Println(color.Ize(color.Red, "[-] ") + "The system is not recognized, report it." + string(runtime.GOOS))
     }
 }
