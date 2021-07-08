@@ -13,6 +13,8 @@ jobs:
         goos: [linux, windows]
         goarch: ["386", amd64]
     steps:
+    - name: Install libpcap  
+      run: apt -y update && install -y libpcap-dev 
     - uses: actions/checkout@v2
     - uses: wangyoucao577/go-release-action@v1.18
       with:
@@ -22,4 +24,3 @@ jobs:
         goversion: 1.16
         project_path: "."
         binary_name: "golconda"
-    - run: go run main.go
