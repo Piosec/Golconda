@@ -63,12 +63,45 @@ golconda client -t 10.10.10.9 --top-ports 100
 golconda server --top-ports 100
 ```
 
-## Dump 
+## Monitor interface 
+
+This feature monitor upcoming connections from a target. 
+
+### Linux
 
 Based on tcpdump, it's not working on Windows now. 
 
 ```bash
 golconda server -d -i eth0 -t 10.10.10.10 
+```
+
+### Windows
+
+First, get the mac address of the adaptator you want to monitor 
+
+```bash
+ipconfig /all
+```
+
+Then use **getmac** to list the Windows device name. 
+
+```bash
+Physical Address    Transport Name
+=================== ==========================================================
+00-FF-78-16-5B-54   Media disconnected
+00-FF-1D-D9-30-08   Media disconnected
+C0-B8-83-EB-39-E9   \Device\Tcpip_{BE995E05-272D-4004-BD00-48767E71E5FF}
+00-50-56-C0-00-01   \Device\Tcpip_{FF430151-6520-4A67-AAF9-82B6A9A3F75A}
+00-50-56-C0-00-08   \Device\Tcpip_{DB6EA806-DB19-4E40-BDDA-5ECEADAC1413}
+C0-B8-83-EB-39-ED   Media disconnected
+00-FF-64-8C-46-01   Media disconnected
+00-FF-B2-BC-FF-42   Media disconnected
+```
+
+Change Tcpip to NPF.
+
+```bash
+golconda.exe server -d -i \Device\NPF_{DB6EA806-DB19-4E40-BDDA-5ECEADAC1413} -t 10.10.10.10 
 ```
 
 # Errors 
@@ -93,5 +126,5 @@ $ ulimit -n 65600
 
 # Todo 
 
-- New server feature, listening to the network interface to monitor upcoming ports
-- Change the top-ports configuration to be more accurate
+- [x] New server feature, listening to the network interface to monitor upcoming ports
+- [x] Change the top-ports configuration to be more accurate

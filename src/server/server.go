@@ -121,7 +121,77 @@ func dumpLinuxSystem(interface_name string, target string){
 
 
 func dumpWindowsSystem(interface_name string, target string){
-    fmt.Println("This feature is not working yet")
+    //fmt.Println("This feature is not working yet")
+    var interface_bool bool = false
+    devices, _ := pcap.FindAllDevs()
+
+    for i :=0;i<len(devices);i++ {
+        if devices[i].Name == interface_name {
+            fmt.Println(color.Ize(color.Green,"[+] ") + "Start monitoring interface " + interface_name)
+            interface_bool = true
+            break
+        }
+    }
+    if interface_bool == false {
+        fmt.Println(color.Ize(color.Red,"[-] ") + "Incorrect interface name")
+        os.Exit(1)
+    }
+
+
+    handle, err := pcap.OpenLive(interface_name,defaultSnapLen, true, 5*time.Minute)
+    if err != nil {
+        panic(err)
+    }
+    defer handle.Close()
+
+    packets := gopacket.NewPacketSource(handle,handle.LinkType()).Packets()
+    var eth layers.Ethernet
+    var ip4 layers.IPv4
+    var ip6 layers.IPv6
+    var tcp layers.TCP
+    var udp layers.UDP
+    var payload gopacket.Payload
+
+    parser := gopacket.NewDecodingLayerParser(layers.LayerTypeEthernet,&eth, &ip4, &ip6,&tcp, &udp, &payload)
+    decodedLayers := make([]gopacket.LayerType, 0, 10)
+    var decoding_error []string
+    var listing_ports []layers.TCPPort
+    for pkt := range packets {
+
+        err = parser.DecodeLayers(pkt.Data(),&decodedLayers)
+        if err != nil {
+            if strings.Contains(err.Error(),"No decoder") {
+                // Filter errors protocol
+                var proto_check = false
+                proto := strings.Split(err.Error()," ")[5]
+                for _, d := range decoding_error {
+                    if d == proto {
+                        proto_check = true
+                    }
+                }
+                if proto_check == false {
+                    decoding_error = append(decoding_error,strings.Split(err.Error()," ")[5])
+                     fmt.Println(color.Ize(color.Red,"[-] " ) + "Error: Decoding a layer ", decoding_error)
+                }
+            }else {
+                fmt.Println(color.Ize(color.Red,"[-] " ) + "Error: Decoding a layer ", err)
+            }
+        }
+        if net.ParseIP(target).Equal(ip4.SrcIP){
+            // List ports open
+            var open_ports = false
+            for _, d := range listing_ports {
+                if d == tcp.DstPort {
+                    open_ports = true
+                }
+            }
+            if open_ports == false {
+                listing_ports = append(listing_ports,tcp.DstPort)
+                fmt.Println(color.Ize(color.Green,"[+] " ) + "Reverse port open: ", tcp.DstPort)
+            }
+
+        }
+    }
 }
 
 func MonitorInterface(interface_name string, target string){
