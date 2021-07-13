@@ -1,10 +1,9 @@
 package main
 
 import (
-    "golconda/src/cmd"
+	"golconda/src/cmd"
 )
 
-
-func main(){
-    cmd.Execute()
+func main() {
+	cmd.Execute()
 }

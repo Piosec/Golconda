@@ -53,7 +53,7 @@ golconda client -t 127.0.0.1 -p 8080,9000,9001 -c powershell
 
 ## Top ports 
 
-This option is based on the nmap-service file from: https://github.com/nmap/nmap
+This option is based on the nmap-services file from: https://github.com/nmap/nmap
 
 ```bash
 golconda client -t 10.10.10.9 --top-ports 100
@@ -129,3 +129,4 @@ $ ulimit -n 65600
 - [x] New server feature, listening to the network interface to monitor upcoming ports
 - [x] Change the top-ports configuration to be more accurate
 - [ ] Exclusion ports
+- [ ] Add logging
