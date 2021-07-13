@@ -128,3 +128,4 @@ $ ulimit -n 65600
 
 - [x] New server feature, listening to the network interface to monitor upcoming ports
 - [x] Change the top-ports configuration to be more accurate
+- [ ] Exclusion ports
