@@ -1,12 +1,11 @@
 package src
 
 import (
-	"fmt"
-	"github.com/TwinProduction/go-color"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
+	"golconda/src/log"
 )
 
 // checkPortsRange check whether the port is between 1 and 65535
@@ -14,11 +13,11 @@ func checkPortsRange(portsRange []string) {
 	for i := 0; i < len(portsRange); i++ {
 		converted, err := strconv.Atoi(portsRange[i])
 		if err != nil {
-			fmt.Println("Conversion error: ", err)
+	    	log.Log.Error("[-] Conversion error: " + err.Error())
 			os.Exit(1)
 		}
 		if converted < 1 || converted > 65535 {
-			fmt.Println(color.Ize(color.Red, "[-] ") + "The value " + color.Ize(color.Red, strconv.Itoa(converted)) + " is not in the ports range (1-65535).")
+		    log.Log.Error("[-] The value " + strconv.Itoa(converted) + " is not in the ports range (1-65535).")
 			os.Exit(1)
 		}
 	}
@@ -34,12 +33,12 @@ func CheckPorts(ports string) []string {
 		splited := strings.Split(ports, "-")
 		converted0, err := strconv.Atoi(splited[0])
 		if err != nil {
-			fmt.Println("Conversion error: ", err)
+			log.Log.Error("[-] Conversion error: " + err.Error())
 			os.Exit(1)
 		}
 		converted1, err := strconv.Atoi(splited[1])
 		if err != nil {
-			fmt.Println("Conversion error: ", err)
+			log.Log.Error("[-] Conversion error: " + err.Error())
 			os.Exit(1)
 		}
 		for i := converted0; i < converted1+1; i++ {
@@ -53,7 +52,6 @@ func CheckPorts(ports string) []string {
 	}
 	// Check ports in range 1 --> 65535
 	checkPortsRange(portsList)
-
 	return portsList
 }
 
@@ -62,6 +60,8 @@ func ValidateIP(ip string) bool {
 	var check = false
 	if len(ip) > 6 && len(ip) < 16 {
 		check, _ := regexp.MatchString(`((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}`, ip)
+		log.Log.Debug("IP address is " + ip)
+		log.Log.Debug("check value is " , check)
 		return check
 	}
 	return check

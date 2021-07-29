@@ -13,6 +13,7 @@ import (
 	"runtime"
 	"strings"
 	"time"
+	"golconda/src/log"
 )
 
 const (
@@ -26,13 +27,13 @@ func PortHandlers(portsList string) {
 	// Get ports array
 	ports = src.CheckPorts(portsList)
 	// Must be debbuging
-	fmt.Println(color.Ize(color.Green, "[+]")+" Listening ports are: ", ports)
+	log.Log.Debug("[+] Listening ports are: ", ports)
 	var listeners []net.Listener
 	// Start listening on all given ports
 	for i := 0; i < len(ports); i++ {
 		ln, err := net.Listen("tcp", ":"+ports[i])
 		if err != nil {
-			fmt.Println(color.Ize(color.Red, "[-] ")+"Error starting listener.", err.Error())
+		    log.Log.Error("[-] Error starting listener." + err.Error())
 			os.Exit(1)
 		}
 		listeners = append(listeners, ln)
@@ -46,7 +47,7 @@ func PortHandlers(portsList string) {
 		go func(i int) {
 			conn, err := listeners[i].Accept()
 			if err != nil {
-				fmt.Println("Error to accept the connection", err.Error())
+				log.Log.Error("[-] Error to accept the connection" + err.Error())
 				os.Exit(1)
 			}
 			connChan <- conn
@@ -77,7 +78,7 @@ func dumpLinuxSystem(interfaceName string, target string) {
 
 	var interfaceBool bool = false
 	if os.Getuid() != 0 {
-		fmt.Println(color.Ize(color.Red, "[-] ") + "Dump mode must be run as root")
+		log.Log.Error("[-] Dump mode must be run as root")
 		os.Exit(1)
 	}
 	// Get interfaces names
@@ -90,7 +91,7 @@ func dumpLinuxSystem(interfaceName string, target string) {
 		}
 	}
 	if interfaceBool == false {
-		fmt.Println(color.Ize(color.Red, "[-] ") + "Incorrect interface name")
+		log.Log.Error("[-] Incorrect interface name")
 		os.Exit(1)
 	}
 
@@ -114,7 +115,7 @@ func dumpLinuxSystem(interfaceName string, target string) {
 
 		err = parser.DecodeLayers(pkt.Data(), &decodedLayers)
 		if err != nil {
-			fmt.Println(color.Ize(color.Red, "[-] ")+"Error: Decoding a layer ", err)
+			log.Log.Error("[-] Error: Decoding a layer " + err.Error())
 		}
 
 		if net.ParseIP(target).Equal(ip4.SrcIP) {
@@ -138,12 +139,13 @@ func dumpWindowsSystem(interfaceName string, target string) {
 		}
 	}
 	if interfaceBool == false {
-		fmt.Println(color.Ize(color.Red, "[-] ") + "Incorrect interface name")
+		log.Log.Error("[-] Incorrect interface name")
 		os.Exit(1)
 	}
 
 	handle, err := pcap.OpenLive(interfaceName, defaultSnapLen, true, 5*time.Minute)
 	if err != nil {
+	    log.Log.Error("[-] Cannot open pcap live.")
 		panic(err)
 	}
 	defer handle.Close()
@@ -175,10 +177,10 @@ func dumpWindowsSystem(interfaceName string, target string) {
 				}
 				if protoCheck == false {
 					decodingError = append(decodingError, strings.Split(err.Error(), " ")[5])
-					fmt.Println(color.Ize(color.Red, "[-] ")+"Error: Decoding a layer ", decodingError)
+					log.Log.Error("[-] Error Decoding a layer " , decodingError)
 				}
 			} else {
-				fmt.Println(color.Ize(color.Red, "[-] ")+"Error: Decoding a layer ", err)
+				log.Log.Error("[-] Error Decoding a layer " + err.Error())
 			}
 		}
 		if net.ParseIP(target).Equal(ip4.SrcIP) {
@@ -215,6 +217,6 @@ func MonitorInterface(interfaceName string, target string) {
 	} else if runtime.GOOS == "windows" {
 		dumpWindowsSystem(interfaceName, target)
 	} else {
-		fmt.Println(color.Ize(color.Red, "[-] ") + "The system is not recognized, report it." + string(runtime.GOOS))
+    	log.Log.Error("[-] The system is not recognized, report it." + string(runtime.GOOS))
 	}
 }

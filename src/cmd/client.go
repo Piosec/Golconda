@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"golconda/src"
 	"golconda/src/client"
+	"golconda/src/log"
 )
 
 var clientCmd = &cobra.Command{
@@ -15,6 +16,7 @@ var clientCmd = &cobra.Command{
          It is also possible to get a oneliner in several languages.
          Please use it with love too <3.`,
 	Run: func(cmd *cobra.Command, args []string) {
+	    log.Init(verbose)
 		fflags := cmd.Flags()
 		if src.ValidateIP(target) {
 			if fflags.Changed("ports") {

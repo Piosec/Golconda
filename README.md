@@ -130,3 +130,4 @@ $ ulimit -n 65600
 - [x] Change the top-ports configuration to be more accurate
 - [ ] Exclusion ports
 - [ ] Add logging
+- [ ] Change GetClientCommand to key value strings

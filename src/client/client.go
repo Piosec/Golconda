@@ -2,8 +2,6 @@ package client
 
 import (
 	"errors"
-	"fmt"
-	"github.com/TwinProduction/go-color"
 	"golconda/src"
 	"net"
 	"os"
@@ -18,19 +16,18 @@ func PortRunner(target string, portsList string) {
 	// Get an array of ports
 	ports = src.CheckPorts(portsList)
 	// Must be debbuging
-	fmt.Println(color.Ize(color.Green, "[+]")+" Checking available ports: ", ports)
-	Log.Debug( "[+] Checking available ports: ", ports)
+	log.Log.Debug( "[+] Checking available ports: ", ports)
 	// foreach ports try to get a TCP connection
 	for i := 0; i < len(ports); i++ {
 		_, err := net.Dial("tcp", target+":"+ports[i])
 		if errors.Is(err, syscall.ECONNREFUSED) {
-			fmt.Println(color.Ize(color.Yellow, "[-] ") + "Port " + ports[i] + " closed.")
+			log.Log.Info("[-] Port " + ports[i] + " closed.")
 		} else if err != nil {
-			fmt.Println(color.Ize(color.Red, "[-] ")+"Error starting listener.", err.Error())
+			log.Log.Error("[-] Unqualified error during TCP connection: " + err.Error())
 			os.Exit(1)
 		}
 	}
-	fmt.Println(color.Ize(color.Purple, "({}) ") + "All ports on the remote targets are tested.")
+	log.Log.Info("({}) All ports on the remote target are tested.")
 }
 
 // GetClientCommand get an IP, port(s) and language to return oneliner

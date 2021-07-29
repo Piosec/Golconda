@@ -24,15 +24,14 @@ func Init(level int) {
 
 	f, err := os.OpenFile("golconda.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-	    log.Fatal(err)
+	    Log.Fatal(err)
 	}
-	// For demo purposes, create two backend for os.Stderr.
-	stdout := logging.NewLogBackend(os.Stderr, "", 0)
+	// First one output to stdout second to a file.
+	// 0 --> no date
+	// 1 --> print date
+	stdout := logging.NewLogBackend(os.Stdout, "", 0)
 	fileout := logging.NewLogBackend(f, "", 1)
 
-	// For messages written to backend2 we want to add some additional
-	// information to the output, including the used log level and the name of
-	// the function.
 	stdoutFormatter := logging.NewBackendFormatter(stdout,format)
 	fileoutFormatter := logging.NewBackendFormatter(fileout,NoColorFormat)
 	switch level {
@@ -56,8 +55,8 @@ func Init(level int) {
 	// Set the backends to be used.
 	logging.SetBackend(fileoutLevel, stdoutLevel)
 
-//	log.Debugf("debug %s","test  debug")
-//	log.Info("info")
+//	Log.Debugf("debug %s","test  debug")
+//	Log.Info("info")
 //	log.Notice("notice")
 //	log.Warning("warning")
 //	log.Error("err")

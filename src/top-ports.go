@@ -2,23 +2,15 @@ package src
 
 import (
 	"os"
-	//    "bufio"
 	"embed"
-	"fmt"
 	"sort"
 	"strconv"
 	"strings"
+	"golconda/src/log"
 )
 
 //go:embed nmap-services
 var f embed.FS
-
-// Read file
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
 
 // GetTopPorts get an int and return a string of the top ports generated from nmap-services file.
 func GetTopPorts(number int) string {
@@ -27,18 +19,22 @@ func GetTopPorts(number int) string {
 	listingPorts := make(map[string]float64)
 	var sData = string(data)
 	splitedFile := strings.Split(sData, "\r\n")
+	//Get each lines of the file.
 	for i := 0; i < len(splitedFile); i++ {
+	    //Ignore empty lines or beginning by # char
 		if strings.HasPrefix(splitedFile[i], "#") == false && splitedFile[i] != "" {
 			splited := strings.Split(splitedFile[i], "	")
 			//Output:  unknown 65514/tcp 0.000076
 			//check if port is tcp or udp
 			protocol := strings.Split(splited[1], "/")
 			if protocol[1] == "tcp" {
+			    // Get the port frequency
 				frequency, err := strconv.ParseFloat(splited[2], 64)
 				if err != nil {
-					fmt.Printf("%d of type %T", frequency, frequency)
+					log.Log.Errorf("%d of type %T", frequency, frequency)
 					os.Exit(1)
 				}
+				// Add to map : port = a frequency
 				listingPorts[protocol[0]] = frequency
 			}
 			//else if  protocol[1] == "udp" {
@@ -71,5 +67,4 @@ func GetTopPorts(number int) string {
 		count += 1
 	}
 	return ports
-
 }
