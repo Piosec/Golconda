@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 	"syscall"
+	"golconda/src/log"
 )
 
 //PortRunner get a target and a portList to check if the connection works.
@@ -18,6 +19,7 @@ func PortRunner(target string, portsList string) {
 	ports = src.CheckPorts(portsList)
 	// Must be debbuging
 	fmt.Println(color.Ize(color.Green, "[+]")+" Checking available ports: ", ports)
+	Log.Debug( "[+] Checking available ports: ", ports)
 	// foreach ports try to get a TCP connection
 	for i := 0; i < len(ports); i++ {
 		_, err := net.Dial("tcp", target+":"+ports[i])
