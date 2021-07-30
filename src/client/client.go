@@ -12,13 +12,17 @@ import (
 
 //PortRunner get a target and a portList to check if the connection works.
 func PortRunner(target string, portsList string) {
+	log.Log.Debug("The target to reach is: " + target)
+	log.Log.Debug("The port(s) to try are (Before check): " + portsList)
 	var ports []string
 	// Get an array of ports
 	ports = src.CheckPorts(portsList)
+	log.Log.Debug("The port(s) to try are (After check): " + ports)
 	// Must be debbuging
 	log.Log.Debug("[+] Checking available ports: ", ports)
 	// foreach ports try to get a TCP connection
 	for i := 0; i < len(ports); i++ {
+		log.Log.Debug("Try connection on port: ", ports[i])
 		_, err := net.Dial("tcp", target+":"+ports[i])
 		if errors.Is(err, syscall.ECONNREFUSED) {
 			log.Log.Info("[-] Port " + ports[i] + " closed.")
@@ -32,6 +36,7 @@ func PortRunner(target string, portsList string) {
 
 // GetClientCommand get an IP, port(s) and language to return oneliner
 func GetClientCommand(ip string, ports string, language string) string {
+	log.Log.Debug("Generating client command from these values [ " + ip + ", " + ports + "," + language + " ]")
 	listPort := strings.Join(src.CheckPorts(ports), ",")
 	switch language {
 	case "python":

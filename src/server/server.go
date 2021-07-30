@@ -31,11 +31,13 @@ func PortHandlers(portsList string) {
 	var listeners []net.Listener
 	// Start listening on all given ports
 	for i := 0; i < len(ports); i++ {
+		log.Log.Debug("Try to listen on port: " + ports[i])
 		ln, err := net.Listen("tcp", ":"+ports[i])
 		if err != nil {
 			log.Log.Error("[-] Error starting listener." + err.Error())
 			os.Exit(1)
 		}
+		log.Log.Debug("Port: " + ports[i] + " is listening.")
 		listeners = append(listeners, ln)
 	}
 
@@ -46,6 +48,7 @@ func PortHandlers(portsList string) {
 	for i := 0; i < len(listeners); i++ {
 		go func(i int) {
 			conn, err := listeners[i].Accept()
+			log.Log.Debug("Try to accept listener: " + listeners[i])
 			if err != nil {
 				log.Log.Error("[-] Error to accept the connection" + err.Error())
 				os.Exit(1)
@@ -120,6 +123,7 @@ func dumpLinuxSystem(interfaceName string, target string) {
 
 		if net.ParseIP(target).Equal(ip4.SrcIP) {
 			fmt.Println(color.Ize(color.Green, "[+] ")+"Reverse port open: ", tcp.DstPort)
+			log.Log.Info("[+] Reverse port open: ", tcp.DstPort)
 		}
 	}
 
@@ -134,6 +138,7 @@ func dumpWindowsSystem(interfaceName string, target string) {
 	for i := 0; i < len(devices); i++ {
 		if devices[i].Name == interfaceName {
 			fmt.Println(color.Ize(color.Green, "[+] ") + "Start monitoring interface " + interfaceName)
+			log.Log.Info("Begining monitoring interface: " + interfacename)
 			interfaceBool = true
 			break
 		}
@@ -194,6 +199,7 @@ func dumpWindowsSystem(interfaceName string, target string) {
 			if openPorts == false {
 				listingPorts = append(listingPorts, tcp.DstPort)
 				fmt.Println(color.Ize(color.Green, "[+] ")+"Reverse port open: ", tcp.DstPort)
+				log.Log.Info("[+] Reverse port open: ", tcp.DstPort)
 			}
 
 		}

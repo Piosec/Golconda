@@ -131,3 +131,4 @@ $ ulimit -n 65600
 - [ ] Exclusion ports
 - [ ] Add logging
 - [ ] Change GetClientCommand to key value strings
+- [ ] Add Timeout for client DialTimeout function 
