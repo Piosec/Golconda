@@ -63,6 +63,18 @@ golconda client -t 10.10.10.9 --top-ports 100
 golconda server --top-ports 100
 ```
 
+## Exclude ports 
+
+This option is based on the nmap-services file from: https://github.com/nmap/nmap
+
+```bash
+golconda client -t 10.10.10.9 -e 80,22
+```
+
+```bash
+golconda server --top-ports 100 -e 80,22
+```
+
 ## Monitor interface 
 
 This feature monitor upcoming connections from a target. 
@@ -128,7 +140,8 @@ $ ulimit -n 65600
 
 - [x] New server feature, listening to the network interface to monitor upcoming ports
 - [x] Change the top-ports configuration to be more accurate
-- [ ] Exclusion ports
+- [x] Exclusion ports
 - [x] Add logging
 - [ ] Change GetClientCommand to key value strings
 - [ ] Add Timeout for client DialTimeout function 
+- [ ] Change arguments location, globals placed to root 

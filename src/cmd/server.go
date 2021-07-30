@@ -33,11 +33,11 @@ var serverCmd = &cobra.Command{
 			server.MonitorInterface(interfaceName, target)
 		}
 		if ports != "" {
-			server.PortHandlers(ports)
+			server.PortHandlers(ports, excludeports)
 		}
 		if topports > 0 && topports < 65535 {
 			//src.GenerateTopPorts(10)
-			server.PortHandlers(src.GetTopPorts(topports))
+			server.PortHandlers(src.GetTopPorts(topports),excludeports)
 		}
 	},
 }

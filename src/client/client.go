@@ -11,13 +11,15 @@ import (
 )
 
 //PortRunner get a target and a portList to check if the connection works.
-func PortRunner(target string, portsList string) {
+func PortRunner(target string, portsList string, excludeports string) {
 	log.Log.Debug("The target to reach is: " + target)
 	log.Log.Debug("The port(s) to try are (Before check): " + portsList)
+	log.Log.Debug("The port(s) to exclude are (Before check): " + excludeports)
 	var ports []string
 	// Get an array of ports
 	ports = src.CheckPorts(portsList)
-	log.Log.Debug("The port(s) to try are (After check): " + ports)
+	ports = src.PortsToExclude(ports,excludeports)
+    log.Log.Debug("The port(s) to try are (After check): " , ports)
 	// Must be debbuging
 	log.Log.Debug("[+] Checking available ports: ", ports)
 	// foreach ports try to get a TCP connection

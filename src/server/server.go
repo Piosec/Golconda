@@ -21,11 +21,12 @@ const (
 )
 
 // PortHandlers get a list of ports, start listening on them and check if a connection arrives or not.
-func PortHandlers(portsList string) {
+func PortHandlers(portsList string, excludeports string) {
 
 	var ports []string
 	// Get ports array
 	ports = src.CheckPorts(portsList)
+    ports = src.PortsToExclude(ports, excludeports)
 	// Must be debbuging
 	log.Log.Debug("[+] Listening ports are: ", ports)
 	var listeners []net.Listener
@@ -48,7 +49,7 @@ func PortHandlers(portsList string) {
 	for i := 0; i < len(listeners); i++ {
 		go func(i int) {
 			conn, err := listeners[i].Accept()
-			log.Log.Debug("Try to accept listener: " + listeners[i])
+			log.Log.Debug("Try to accept listener: " , listeners[i])
 			if err != nil {
 				log.Log.Error("[-] Error to accept the connection" + err.Error())
 				os.Exit(1)
@@ -138,7 +139,7 @@ func dumpWindowsSystem(interfaceName string, target string) {
 	for i := 0; i < len(devices); i++ {
 		if devices[i].Name == interfaceName {
 			fmt.Println(color.Ize(color.Green, "[+] ") + "Start monitoring interface " + interfaceName)
-			log.Log.Info("Begining monitoring interface: " + interfacename)
+			log.Log.Info("Begining monitoring interface: " + interfaceName)
 			interfaceBool = true
 			break
 		}

@@ -11,6 +11,7 @@ var command string
 var dump bool
 var interfaceName string
 var verbose int
+var excludeports string
 
 var rootCmd = &cobra.Command{
 	Use:   "golconda",
@@ -22,5 +23,6 @@ var rootCmd = &cobra.Command{
 // Execute get required params depending on the client and server
 func Execute() error {
 	rootCmd.PersistentFlags().IntVarP(&verbose, "verbose", "v", 0, "Increase the verbosity output. (Default: 0)")
-	return rootCmd.Execute()
+    rootCmd.PersistentFlags().StringVarP(&excludeports, "exclude-ports", "e", "", "exclude the following ports. Ex: 21,22,8080 or 22-8080")
+    return rootCmd.Execute()
 }

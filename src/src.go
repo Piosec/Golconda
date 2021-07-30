@@ -13,6 +13,7 @@ func checkPortsRange(portsRange []string) {
 	for i := 0; i < len(portsRange); i++ {
 		converted, err := strconv.Atoi(portsRange[i])
 		if err != nil {
+            log.Log.Debug("Port value to convert: " + portsRange[i])
 			log.Log.Error("[-] Conversion error: " + err.Error())
 			os.Exit(1)
 		}
@@ -51,9 +52,49 @@ func CheckPorts(ports string) []string {
 		portsList = append(portsList, ports)
 	}
 	// Check ports in range 1 --> 65535
-	checkPortsRange(portsList)
+    log.Log.Debug("Ports list to check: " , portsList)
+    checkPortsRange(portsList)
 	return portsList
 }
+
+func checkPortPresent(a string, list []string) bool {
+    for _, b := range list {
+        if b == a {
+            return true
+        }
+    }
+    return false
+}
+
+func findAndDelete(s []string, item string) []string {
+    index := 0
+    for _, i := range s {
+        if i != item {
+            s[index] = i
+            index++
+        }
+    }
+    return s[:index]
+}
+
+
+func PortsToExclude(ports []string, exclude string) []string {
+    //var newPorts []string
+    excludeChecked := CheckPorts(exclude)
+    log.Log.Debug("Ports list received: " , ports)
+    log.Log.Debug("Ports to exclude: " , excludeChecked)
+    for i := 0 ; i<len(ports);i++ {
+        for j := 0 ; j < len(excludeChecked) ; j++ {
+            if ports[i] == excludeChecked[j] {
+                findAndDelete(ports,excludeChecked[j])
+            }
+        }
+    }
+
+    log.Log.Debug("Final list of ports: " , ports)
+    return ports
+}
+
 
 // ValidateIP get a string IP and check if that string match the following regex
 func ValidateIP(ip string) bool {
