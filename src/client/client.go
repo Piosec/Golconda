@@ -3,11 +3,11 @@ package client
 import (
 	"errors"
 	"golconda/src"
+	"golconda/src/log"
 	"net"
 	"os"
 	"strings"
 	"syscall"
-	"golconda/src/log"
 )
 
 //PortRunner get a target and a portList to check if the connection works.
@@ -16,7 +16,7 @@ func PortRunner(target string, portsList string) {
 	// Get an array of ports
 	ports = src.CheckPorts(portsList)
 	// Must be debbuging
-	log.Log.Debug( "[+] Checking available ports: ", ports)
+	log.Log.Debug("[+] Checking available ports: ", ports)
 	// foreach ports try to get a TCP connection
 	for i := 0; i < len(ports); i++ {
 		_, err := net.Dial("tcp", target+":"+ports[i])
@@ -52,4 +52,3 @@ func GetClientCommand(ip string, ports string, language string) string {
 	}
 
 }
-

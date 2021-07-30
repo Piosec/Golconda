@@ -4,8 +4,8 @@ import (
 	"errors"
 	"github.com/spf13/cobra"
 	"golconda/src"
-	"golconda/src/server"
 	"golconda/src/log"
+	"golconda/src/server"
 )
 
 var serverCmd = &cobra.Command{
@@ -17,18 +17,18 @@ var serverCmd = &cobra.Command{
 
 		if dump {
 			if target == "" || src.ValidateIP(target) == false {
-			    log.Log.Error("The target must be set or a valid IPv4.")
+				log.Log.Error("The target must be set or a valid IPv4.")
 				return errors.New("The target must be set or a valid IPv4.")
 			}
 			if interfaceName == "" {
-			    log.Log.Error("The interface name must be set.")
+				log.Log.Error("The interface name must be set.")
 				return errors.New("The interface name must be set.")
 			}
 		}
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-        log.Init(verbose)
+		log.Init(verbose)
 		if dump {
 			server.MonitorInterface(interfaceName, target)
 		}

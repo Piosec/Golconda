@@ -1,11 +1,11 @@
 package src
 
 import (
+	"golconda/src/log"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
-	"golconda/src/log"
 )
 
 // checkPortsRange check whether the port is between 1 and 65535
@@ -13,11 +13,11 @@ func checkPortsRange(portsRange []string) {
 	for i := 0; i < len(portsRange); i++ {
 		converted, err := strconv.Atoi(portsRange[i])
 		if err != nil {
-	    	log.Log.Error("[-] Conversion error: " + err.Error())
+			log.Log.Error("[-] Conversion error: " + err.Error())
 			os.Exit(1)
 		}
 		if converted < 1 || converted > 65535 {
-		    log.Log.Error("[-] The value " + strconv.Itoa(converted) + " is not in the ports range (1-65535).")
+			log.Log.Error("[-] The value " + strconv.Itoa(converted) + " is not in the ports range (1-65535).")
 			os.Exit(1)
 		}
 	}
@@ -61,7 +61,7 @@ func ValidateIP(ip string) bool {
 	if len(ip) > 6 && len(ip) < 16 {
 		check, _ := regexp.MatchString(`((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}`, ip)
 		log.Log.Debug("IP address is " + ip)
-		log.Log.Debug("check value is " , check)
+		log.Log.Debug("check value is ", check)
 		return check
 	}
 	return check

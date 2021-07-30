@@ -21,6 +21,6 @@ var rootCmd = &cobra.Command{
 
 // Execute get required params depending on the client and server
 func Execute() error {
-	rootCmd.PersistentFlags().IntVarP(&verbose, "verbose","v", 0, "Increase the verbosity output. (Default: 0)")
+	rootCmd.PersistentFlags().IntVarP(&verbose, "verbose", "v", 0, "Increase the verbosity output. (Default: 0)")
 	return rootCmd.Execute()
 }

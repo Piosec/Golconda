@@ -1,12 +1,12 @@
 package src
 
 import (
-	"os"
 	"embed"
+	"golconda/src/log"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
-	"golconda/src/log"
 )
 
 //go:embed nmap-services
@@ -21,14 +21,14 @@ func GetTopPorts(number int) string {
 	splitedFile := strings.Split(sData, "\r\n")
 	//Get each lines of the file.
 	for i := 0; i < len(splitedFile); i++ {
-	    //Ignore empty lines or beginning by # char
+		//Ignore empty lines or beginning by # char
 		if strings.HasPrefix(splitedFile[i], "#") == false && splitedFile[i] != "" {
 			splited := strings.Split(splitedFile[i], "	")
 			//Output:  unknown 65514/tcp 0.000076
 			//check if port is tcp or udp
 			protocol := strings.Split(splited[1], "/")
 			if protocol[1] == "tcp" {
-			    // Get the port frequency
+				// Get the port frequency
 				frequency, err := strconv.ParseFloat(splited[2], 64)
 				if err != nil {
 					log.Log.Errorf("%d of type %T", frequency, frequency)

@@ -7,13 +7,13 @@ import (
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcap"
 	"golconda/src"
+	"golconda/src/log"
 	"net"
 	"os"
 	"os/signal"
 	"runtime"
 	"strings"
 	"time"
-	"golconda/src/log"
 )
 
 const (
@@ -33,7 +33,7 @@ func PortHandlers(portsList string) {
 	for i := 0; i < len(ports); i++ {
 		ln, err := net.Listen("tcp", ":"+ports[i])
 		if err != nil {
-		    log.Log.Error("[-] Error starting listener." + err.Error())
+			log.Log.Error("[-] Error starting listener." + err.Error())
 			os.Exit(1)
 		}
 		listeners = append(listeners, ln)
@@ -145,7 +145,7 @@ func dumpWindowsSystem(interfaceName string, target string) {
 
 	handle, err := pcap.OpenLive(interfaceName, defaultSnapLen, true, 5*time.Minute)
 	if err != nil {
-	    log.Log.Error("[-] Cannot open pcap live.")
+		log.Log.Error("[-] Cannot open pcap live.")
 		panic(err)
 	}
 	defer handle.Close()
@@ -177,7 +177,7 @@ func dumpWindowsSystem(interfaceName string, target string) {
 				}
 				if protoCheck == false {
 					decodingError = append(decodingError, strings.Split(err.Error(), " ")[5])
-					log.Log.Error("[-] Error Decoding a layer " , decodingError)
+					log.Log.Error("[-] Error Decoding a layer ", decodingError)
 				}
 			} else {
 				log.Log.Error("[-] Error Decoding a layer " + err.Error())
@@ -217,6 +217,6 @@ func MonitorInterface(interfaceName string, target string) {
 	} else if runtime.GOOS == "windows" {
 		dumpWindowsSystem(interfaceName, target)
 	} else {
-    	log.Log.Error("[-] The system is not recognized, report it." + string(runtime.GOOS))
+		log.Log.Error("[-] The system is not recognized, report it." + string(runtime.GOOS))
 	}
 }
