@@ -29,7 +29,9 @@ func CheckPorts(ports string) []string {
 	// The given string can be one port, X ports separated by comma or port a to b separated by dash
 	var portsList []string
 	//Check if the string contains -
-	if strings.Contains(ports, "-") {
+	if ports == "" {
+	    return portsList
+	} else	if strings.Contains(ports, "-") {
 		// Split the string to get the values
 		splited := strings.Split(ports, "-")
 		converted0, err := strconv.Atoi(splited[0])
@@ -66,27 +68,25 @@ func checkPortPresent(a string, list []string) bool {
     return false
 }
 
-func findAndDelete(s []string, item string) []string {
-    index := 0
-    for _, i := range s {
-        if i != item {
-            s[index] = i
-            index++
-        }
-    }
-    return s[:index]
+func RemoveIndex(s []string, index int) []string {
+	return append(s[:index], s[index+1:]...)
 }
 
 
-func PortsToExclude(ports []string, exclude string) []string {
+func PortsToExclude(ports []string, exclude []string) []string {
     //var newPorts []string
-    excludeChecked := CheckPorts(exclude)
+    var tmpcount int
     log.Log.Debug("Ports list received: " , ports)
-    log.Log.Debug("Ports to exclude: " , excludeChecked)
+    log.Log.Debug("Ports to exclude: " , exclude)
     for i := 0 ; i<len(ports);i++ {
-        for j := 0 ; j < len(excludeChecked) ; j++ {
-            if ports[i] == excludeChecked[j] {
-                findAndDelete(ports,excludeChecked[j])
+        for j := 0 ; j < len(exclude) ; j++ {
+            if ports[i] == exclude[j] {
+                tmpcount = tmpcount + 1
+                ports = RemoveIndex(ports,i)
+                if tmpcount == len(exclude){
+                    log.Log.Debug("tmpcount var reaches the value: " , tmpcount)
+                    break
+                }
             }
         }
     }

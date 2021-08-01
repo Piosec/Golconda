@@ -21,14 +21,13 @@ var clientCmd = &cobra.Command{
 		if src.ValidateIP(target) {
 			if fflags.Changed("ports") {
 				if fflags.Changed("cmd") {
-
-					fmt.Println(client.GetClientCommand(target, ports, command))
+					fmt.Println(client.GetClientCommand(target, ports, command, excludeports))
 				} else {
 					client.PortRunner(target, ports,excludeports)
 				}
 			} else if topports > 0 && topports < 65535 {
 				if fflags.Changed("cmd") {
-					fmt.Println(client.GetClientCommand(target, src.GetTopPorts(topports), command))
+					fmt.Println(client.GetClientCommand(target, src.GetTopPorts(topports), command, excludeports))
 				} else {
 					client.PortRunner(target, src.GetTopPorts(topports),excludeports)
 				}

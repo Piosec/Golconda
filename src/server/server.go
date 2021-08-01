@@ -23,10 +23,12 @@ const (
 // PortHandlers get a list of ports, start listening on them and check if a connection arrives or not.
 func PortHandlers(portsList string, excludeports string) {
 
-	var ports []string
+	//var ports []string
 	// Get ports array
-	ports = src.CheckPorts(portsList)
-    ports = src.PortsToExclude(ports, excludeports)
+	//ports = src.CheckPorts(portsList)
+	log.Log.Debug("Ports list to check : " + portsList)
+	log.Log.Debug("Ports list to exclude : " + excludeports)
+    ports := src.PortsToExclude(src.CheckPorts(portsList), src.CheckPorts(excludeports))
 	// Must be debbuging
 	log.Log.Debug("[+] Listening ports are: ", ports)
 	var listeners []net.Listener
