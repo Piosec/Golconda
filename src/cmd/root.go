@@ -12,6 +12,7 @@ var dump bool
 var interfaceName string
 var verbose int
 var excludeports string
+var timeout int
 
 var rootCmd = &cobra.Command{
 	Use:   "golconda",

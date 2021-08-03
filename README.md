@@ -145,3 +145,4 @@ $ ulimit -n 65600
 - [ ] Change GetClientCommand to key value strings
 - [ ] Add Timeout for client DialTimeout function 
 - [ ] Change arguments location, globals placed to root 
+

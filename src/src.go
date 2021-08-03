@@ -84,13 +84,11 @@ func PortsToExclude(ports []string, exclude []string) []string {
                 tmpcount = tmpcount + 1
                 ports = RemoveIndex(ports,i)
                 if tmpcount == len(exclude){
-                    log.Log.Debug("tmpcount var reaches the value: " , tmpcount)
                     break
                 }
             }
         }
     }
-
     log.Log.Debug("Final list of ports: " , ports)
     return ports
 }

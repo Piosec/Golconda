@@ -21,13 +21,13 @@ var clientCmd = &cobra.Command{
 		if src.ValidateIP(target) {
 			if fflags.Changed("ports") {
 				if fflags.Changed("cmd") {
-					fmt.Println(client.GetClientCommand(target, ports, command, excludeports))
+					fmt.Println(client.GetClientCommand(target, ports, command, excludeports,timeout))
 				} else {
 					client.PortRunner(target, ports,excludeports)
 				}
 			} else if topports > 0 && topports < 65535 {
 				if fflags.Changed("cmd") {
-					fmt.Println(client.GetClientCommand(target, src.GetTopPorts(topports), command, excludeports))
+					fmt.Println(client.GetClientCommand(target, src.GetTopPorts(topports), command, excludeports, timeout))
 				} else {
 					client.PortRunner(target, src.GetTopPorts(topports),excludeports)
 				}
@@ -47,6 +47,7 @@ func init() {
 	clientCmd.Flags().StringVarP(&target, "target", "t", "127.0.0.1", "Target to check reverse ports. Ex: 127.0.0.1")
 	clientCmd.Flags().IntVar(&topports, "top-ports", 100, "Try to initiate a connection to the most known ports.")
 	clientCmd.Flags().StringVarP(&command, "cmd", "c", "", "Oneliner in several languages to execute if you cannot upload the binary to the remote target.")
+	clientCmd.Flags().IntVarP(&timeout, "duration-timeout", "d", 1, "Define duration time before timeout (Default 1s).")
 	clientCmd.MarkFlagRequired("target")
 	rootCmd.AddCommand(clientCmd)
 }
