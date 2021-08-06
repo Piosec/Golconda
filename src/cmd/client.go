@@ -23,13 +23,13 @@ var clientCmd = &cobra.Command{
 				if fflags.Changed("cmd") {
 					fmt.Println(client.GetClientCommand(target, ports, command, excludeports,timeout))
 				} else {
-					client.PortRunner(target, ports,excludeports)
+					client.PortRunner(target, ports,excludeports, timeout)
 				}
 			} else if topports > 0 && topports < 65535 {
 				if fflags.Changed("cmd") {
 					fmt.Println(client.GetClientCommand(target, src.GetTopPorts(topports), command, excludeports, timeout))
 				} else {
-					client.PortRunner(target, src.GetTopPorts(topports),excludeports)
+					client.PortRunner(target, src.GetTopPorts(topports),excludeports, timeout)
 				}
 			} else {
 				fmt.Println(color.Ize(color.Red, "[-] ") + "Top ports must be between 1 and 65535")

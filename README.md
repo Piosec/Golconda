@@ -115,6 +115,11 @@ Change Tcpip to NPF.
 ```bash
 golconda.exe server -d -i \Device\NPF_{DB6EA806-DB19-4E40-BDDA-5ECEADAC1413} -t 10.10.10.10 
 ```
+# Manual install 
+
+```bash
+go build
+```
 
 # Errors 
 
@@ -143,6 +148,7 @@ $ ulimit -n 65600
 - [x] Exclusion ports
 - [x] Add logging
 - [ ] Change GetClientCommand to key value strings
-- [ ] Add Timeout for client DialTimeout function 
+- [x] Add Timeout for client DialTimeout function 
 - [ ] Change arguments location, globals placed to root 
-
+- [ ] Add C oneliner portscanner
+- [ ] Sleep time between each ports 

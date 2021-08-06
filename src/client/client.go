@@ -9,13 +9,15 @@ import (
 	"strings"
 	"syscall"
 	"strconv"
+	"time"
 	)
 
 //PortRunner get a target and a portList to check if the connection works.
-func PortRunner(target string, portsList string, excludeports string) {
+func PortRunner(target string, portsList string, excludeports string, timeout int) {
 	log.Log.Debug("The target to reach is: " + target)
 	log.Log.Debug("The port(s) to try are (Before check): " + portsList)
 	log.Log.Debug("The port(s) to exclude are (Before check): " + excludeports)
+
 	//var ports []string
 	// Get an array of ports
 	//ports := src.CheckPorts(portsList)
@@ -26,10 +28,13 @@ func PortRunner(target string, portsList string, excludeports string) {
 	// foreach ports try to get a TCP connection
 	for i := 0; i < len(ports); i++ {
 		log.Log.Debug("Try connection on port: ", ports[i])
-		_, err := net.Dial("tcp", target+":"+ports[i])
+		_, err := net.DialTimeout("tcp", target+":"+ports[i],  time.Duration(timeout) * time.Second)
 		if errors.Is(err, syscall.ECONNREFUSED) {
 			log.Log.Info("[-] Port " + ports[i] + " closed.")
-		} else if err != nil {
+		} else if os.IsTimeout(err)  {
+		    log.Log.Info("Timeout reached on port ", ports[i])
+		    continue
+		}else if err != nil {
 			log.Log.Error("[-] Unqualified error during TCP connection: " + err.Error())
 			os.Exit(1)
 		}
@@ -47,17 +52,17 @@ func GetClientCommand(ip string, ports string, language string, excludeports str
 
 	switch language {
 	case "python":
-		return "python -c \"import socket;[True for port in (" + listPort + ") if 0 == socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect_ex(('" + ip + "', port  )) ]\""
+		return "python -c \"import socket;socket.setdefaulttimeout(" + strconv.Itoa(timeout) +");[True if 0 == socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect_ex(('" + ip + "', port)) else next for port in (" + listPort + ")]\""
 	case "bash":
 		return "bash -c 'for port in {" + listPort + "}; do timeout " + strconv.Itoa(timeout) +" echo >/dev/tcp/" + ip + "/$port;done' 2>/dev/null"
 	case "powershell":
-		return "(" + listPort + ") | % {echo ((new-object Net.Sockets.TcpClient).Connect(" + ip + ",$_))} 2>$null"
+		return "(" + listPort + ") | % {echo ((new-object Net.Sockets.TcpClient).BeginConnect('" + ip + "',$_,$null,$null).AsyncWaitHandle.WaitOne(" + strconv.Itoa(timeout * 1000) + "))} 2>$null"
 	case "perl":
 		return "perl -MIO::Socket -e 'for $port (" + listPort + "){$socket=IO::Socket::INET->new(Proto=>tcp,PeerAddr=>\"" + ip + "\",PeerPort=>$port, Timeout => " + strconv.Itoa(timeout) +") ;}'"
 	case "ruby":
 		return "ruby -rsocket -rtimeout -e '\"" + listPort + "\".split(\",\").each do |port| sock = Socket.new(:INET, :STREAM);raw = Socket.sockaddr_in(port,\"" + ip + "\");begin Timeout.timeout(" + strconv.Itoa(timeout) +") do sock.connect(raw) end rescue nil end;sock.close end'"
 	case ".net":
-		var rev = "using System;using System.Net;using System.Net.Sockets;namespace portscanner {class portscan {static void Main(){string s = \"" + listPort + "\";string[] ports = s.Split(',');foreach (var tmpPort in ports){var port = Convert.ToInt32(tmpPort);IPEndPoint ip = new IPEndPoint(IPAddress.Parse(\"" + ip + "\"), port);Socket server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);server.Connect(ip);}}}}"
+		var rev = "using System;using System.Net;using System.Net.Sockets;namespace portscanner {class portscan {static void Main(){string s = \"" + listPort + "\";string[] ports = s.Split(',');foreach (var tmpPort in ports){var port = Convert.ToInt32(tmpPort);var timestamp = Convert.ToInt32(" + strconv.Itoa(timeout) +");TcpClient client = new TcpClient();client.ConnectAsync(\"" + ip + "\", port).Wait(timestamp * 1000);client.Close();}}}}"
 		return "Here is the command to compile that oneliner, don't forget to replace the .net version: \r\n\r\necho " + rev + " > portscanner.net && c:\\Windows\\Microsoft.NET\\Framework\\v{.netVersion}\\csc.exe portscanner.net && portscanner.exe"
 	default:
 		return "The language requested is not provided."
