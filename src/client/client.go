@@ -50,6 +50,17 @@ func GetClientCommand(ip string, ports string, language string, excludeports str
 	portsArray := src.PortsToExclude(src.CheckPorts(ports),src.CheckPorts(excludeports))
 	listPort := strings.Join(portsArray, ",")
 
+    languageList := make(map[string]string)
+    languageList["python"] =  "python -c \"import socket;socket.setdefaulttimeout(" + strconv.Itoa(timeout) +");[True if 0 == socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect_ex(('" + ip + "', port)) else next for port in (" + listPort + ")]\""
+    languageList["bash"] =  "bash -c 'for port in {" + listPort + "}; do timeout " + strconv.Itoa(timeout) +" echo >/dev/tcp/" + ip + "/$port;done' 2>/dev/null"
+    languageList["powershell"] = "(" + listPort + ") | % {echo ((new-object Net.Sockets.TcpClient).BeginConnect('" + ip + "',$_,$null,$null).AsyncWaitHandle.WaitOne(" + strconv.Itoa(timeout * 1000) + "))} 2>$null"
+    languageList["perl"] = "perl -MIO::Socket -e 'for $port (" + listPort + "){$socket=IO::Socket::INET->new(Proto=>tcp,PeerAddr=>\"" + ip + "\",PeerPort=>$port, Timeout => " + strconv.Itoa(timeout) +") ;}'"
+    languageList["ruby"] = "ruby -rsocket -rtimeout -e '\"" + listPort + "\".split(\",\").each do |port| sock = Socket.new(:INET, :STREAM);raw = Socket.sockaddr_in(port,\"" + ip + "\");begin Timeout.timeout(" + strconv.Itoa(timeout) +") do sock.connect(raw) end rescue nil end;sock.close end'"
+    languageList[".net"] = "Here is the command to compile that oneliner, don't forget to replace the .net version: \r\n\r\necho using System;using System.Net;using System.Net.Sockets;namespace portscanner {class portscan {static void Main(){string s = \"" + listPort + "\";string[] ports = s.Split(',');foreach (var tmpPort in ports){var port = Convert.ToInt32(tmpPort);var timestamp = Convert.ToInt32(" + strconv.Itoa(timeout) +");TcpClient client = new TcpClient();client.ConnectAsync(\"" + ip + "\", port).Wait(timestamp * 1000);client.Close();}}}} > portscanner.net && c:\\Windows\\Microsoft.NET\\Framework\\v{.netVersion}\\csc.exe portscanner.net && portscanner.exe"
+
+    return languageList[language]
+
+/*
 	switch language {
 	case "python":
 		return "python -c \"import socket;socket.setdefaulttimeout(" + strconv.Itoa(timeout) +");[True if 0 == socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect_ex(('" + ip + "', port)) else next for port in (" + listPort + ")]\""
@@ -67,5 +78,5 @@ func GetClientCommand(ip string, ports string, language string, excludeports str
 	default:
 		return "The language requested is not provided."
 	}
-
+*/
 }
