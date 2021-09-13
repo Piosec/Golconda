@@ -147,8 +147,8 @@ $ ulimit -n 65600
 - [x] Change the top-ports configuration to be more accurate
 - [x] Exclusion ports
 - [x] Add logging
-- [ ] Change GetClientCommand to key value strings
+- [x] Change GetClientCommand to key value strings
 - [x] Add Timeout for client DialTimeout function 
 - [ ] Change arguments location, globals placed to root 
-- [ ] Add C oneliner portscanner
+- [-] Add C oneliner portscanner (Missing timeout)
 - [ ] Sleep time between each ports 
